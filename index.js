@@ -2,22 +2,17 @@ require('dotenv').config()
 require('express-async-errors')
 require('./utils/db')
 
+const reportRoute = require("./routes/reportRoutes");
+
 const express = require('express')
 const app = express()
 const port = process.env.PORT
 
 app.use(express.json())
 
-app.use('/check', (_, res) => res.json({ message: "Health check"}))
 app.use('/api', require('./routes'))
+app.use("/api/reports", reportRoute);
 
-// app.use((req,res,next) => {
-//     console.log("IN custom middleware")
-//     const err = new Error("WHOOOPS!")
-//     err.status = 999
-//     throw err
-//     // next();
-// } )
 
 // catch 404 and forward to error handler
 app.use((req,res,next) => {
@@ -26,6 +21,7 @@ app.use((req,res,next) => {
     next(err)
     console.log(err);
 })
+
 
 //catch all middleware/route
 app.use((error, req,res,next) => {

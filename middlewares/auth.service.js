@@ -11,13 +11,10 @@ const {jwtSecret, salt, clientUrl} = require("../config")
 const signUp = async (data) => {
     try {
     const { email } = data
-    console.log(data);
-    console.log({ email });
-    console.log("ok1");
     let user = await User.findOne({ email })
-    console.log("ok2");
 
     if(user) throw new Error("Email already exists")
+    
 
     user = new User(data)
 
