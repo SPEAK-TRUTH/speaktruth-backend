@@ -1,15 +1,22 @@
-require('dotenv').config()
-require('express-async-errors')
-require('./utils/db')
+require('dotenv').config();
+require('express-async-errors');
+require('./utils/db');
+require('./utils/socket');
 
 const express = require('express')
 const app = express()
 const port = process.env.PORT
 
+
+const { initializeSocket } = require("./utils/socket");
+initializeSocket();
+
 app.use(express.json())
 
 app.use('/check', (_, res) => res.json({ message: "Health check"}))
 app.use('/api', require('./routes'))
+const chatRoutes = require('./routes/chat');
+app.use('/chat', chatRoutes);
 
 // app.use((req,res,next) => {
 //     console.log("IN custom middleware")
