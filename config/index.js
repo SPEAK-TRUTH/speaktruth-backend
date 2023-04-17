@@ -10,7 +10,7 @@ if (envFound.error) {
 
 module.exports = {
   port: process.env.PORT,
-  databaseURL: process.env.MONGODB_URI,
+  databaseURL: process.env.MONGODB_URL,
   databaseName: process.env.MONGODB_DBNAME,
   jwtSecret: process.env.JWT_SECRET,
   salt: Number(process.env.SALT),
