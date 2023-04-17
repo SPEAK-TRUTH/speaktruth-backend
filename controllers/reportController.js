@@ -18,28 +18,77 @@ const generateUniqueReportKey = async () => {
   return reportKey;
 };
 
-// Controller function to create a new report
-const createReport = async (req, res, next) => {
-  // Extract data from request body
-  const { subject, incidentDate, department, categories, content } = req.body;
+const createReport = async (req, res) => {
+  console.log("Data received from the client:", req.body);
 
-  // Generate a unique report key
-  const reportKey = await generateUniqueReportKey();
-
-  // Create a new report object with the extracted data and the generated report key
-  const report = new Report({ reportKey, subject, incidentDate, department, categories, content });
+  const {
+    subject,
+    incidentDate,
+    department,
+    categories,
+    content,
+  } = req.body;
 
   try {
-    // Save the report to the database
+    if (!subject || !incidentDate || !department || !categories || !content) {
+      throw new Error("Please enter all required fields");
+    }
+
+    // let filesArray = [];
+    // if (req.files) {
+    //   console.log("Received files:", req.files);s
+    //   filesArray = req.files.map((file) => ({
+    //     filename: file.filename,
+    //     contentType: file.mimetype,
+    //     data: file.path,
+    //   }));
+    //   console.log("Processed files:", filesArray);
+    // }
+    let filesArray = [];
+    if (req.body.files) {
+      console.log("Received files:", req.body.files);
+      filesArray = req.body.files.map((file) => ({
+        filename: file,
+        contentType: "", // You can either leave it empty or try to infer the content type from the file extension
+        data: "files/" + file,
+      }));
+      console.log("Processed files:", filesArray);
+    }
+        
+
+    const reportKey = await generateUniqueReportKey();
+
+    const report = new Report({
+      reportKey,
+      subject,
+      incidentDate,
+      department,
+      categories,
+      content,
+      files: filesArray,
+    });
     await report.save();
 
-    // Send a success response with the generated report key
-    res.status(201).json({ message: "Report created successfully", reportKey: reportKey });
+    res.status(201).json({
+      message: "Report created successfully",
+      report: {
+        reportKey,
+        subject,
+        incidentDate,
+        department,
+        categories,
+        content,
+        files: filesArray,
+      },
+    });
   } catch (error) {
-    // Send an error response with the error message
+    console.error("Error in createReport:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
 
 // Controller function to get all reports
 const getAllReports = async (req, res, next) => {
@@ -77,8 +126,11 @@ const getReportByKey = async (req, res, next) => {
   }
 };
 
+
+
+
 module.exports = {
   createReport,
   getAllReports,
-  getReportByKey
+  getReportByKey,
 };
