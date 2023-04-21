@@ -15,13 +15,15 @@ exports.loadChat = async (req, res) => {
 
 exports.sendMessage = async (req, res) => {
   const reportKey = req.params.reportKey;
-  const { message, senderId, recipientId } = req.body;
+  // const { message, senderId, recipientId } = req.body;
+  const { message, adminUser } = req.body;
 
   try {
     const newMessage = new Chat({
       message: message,
-      reporter: senderId,
-      adminUser: recipientId,
+      // reporter: senderId,
+      // adminUser: recipientId,
+      adminUser: adminUser,
       reportKey: reportKey,
     });
 

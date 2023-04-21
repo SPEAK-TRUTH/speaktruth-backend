@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Chat</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Report Chat</h1>
+      <div id="messages" style="height: 70vh; overflow-y: scroll;">
+        <% messages.forEach((message) => { %>
+          <li class="<%= message.reporter === senderId ? 'sent' : 'received' %>">
+            <%= message.message %>
+          </li>
+        <% }) %>
+      </div>
+      <form id="form" action="" style="margin-top: 20px;">
+        <input id="input" autocomplete="off" autofocus />
+        <button>Send</button>
+      </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io();
+
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (input.value) {
+          const item = createMessageItem(input.value, "sent");
+          messages.appendChild(item);
+          socket.emit("chat message", input.value);
+          input.value = "";
+        }
+      });
+
+      socket.on("chat message", function (msg) {
+        const item = createMessageItem(msg, "received");
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      function createMessageItem(msg, type) {
+        const item = document.createElement("li");
+        item.classList.add("message", type);
+        item.textContent = msg;
+        return item;
+      }
+    </script>
+  </body>
+</html>

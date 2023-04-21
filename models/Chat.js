@@ -7,18 +7,18 @@ const ChatSchema = new Schema(
       type: String,
       required: true,
     },
-    reporter: {
-      type: String, // Reporter ID
+    // reporter: {
+    //   type: String, // Reporter ID
+    //   required: true,
+    // },
+    reportKey: {
+      type: String,
       required: true,
     },
     adminUser: {
       type: String, // Admin User ID
       required: true,
-    },
-    reportKey: {
-      type: String,
-      required: true,
-    },
+    }
   },
   { timestamps: true }
 );

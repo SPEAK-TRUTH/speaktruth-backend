@@ -10,8 +10,13 @@ const port = process.env.PORT
 const path = require("path");
 const multer = require("multer"); 
 const cors = require('cors');
+// socket追加分
+const http = require("http");
+const server = http.createServer(app);
+const { initializeSocket } = require("./utils/socket");
 // Enable CORS for all routes
-app.use(cors());
+// cors重複の為コメントアウト
+// app.use(cors());
 
 app.use(cors({
   origin: 'http://127.0.0.1:5174',
@@ -21,6 +26,9 @@ app.use(express.json())
 app.use("/files", express.static(path.join(__dirname, "/files")));
 
 app.use("/api/reports", reportRoute);
+
+// socket初期化
+initializeSocket(server);
 
 
 // Configure multer for file uploads
@@ -84,7 +92,6 @@ const storage = multer.diskStorage({
     next(err);
   });
   
-
 
 // catch 404 and forward to error handler
 app.use((req,res,next) => {
