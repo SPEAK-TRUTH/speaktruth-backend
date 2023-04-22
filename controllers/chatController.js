@@ -6,7 +6,7 @@ exports.loadChat = async (req, res) => {
   try {
     const messages = await Chat.find({ reportKey: reportKey }).sort({ createdAt: 1 });
 
-    res.render('report', { messages: messages, reportKey: reportKey });
+    res.json({ messages: messages, reportKey: reportKey });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -16,14 +16,14 @@ exports.loadChat = async (req, res) => {
 exports.sendMessage = async (req, res) => {
   const reportKey = req.params.reportKey;
   // const { message, senderId, recipientId } = req.body;
-  const { message, adminUser } = req.body;
+  const { message, userID } = req.body;
 
   try {
     const newMessage = new Chat({
       message: message,
       // reporter: senderId,
       // adminUser: recipientId,
-      adminUser: adminUser,
+      userID: userID,
       reportKey: reportKey,
     });
 

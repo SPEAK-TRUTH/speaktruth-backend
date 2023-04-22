@@ -15,7 +15,7 @@ const ChatSchema = new Schema(
       type: String,
       required: true,
     },
-    adminUser: {
+    userID: {
       type: String, // Admin User ID
       required: true,
     }

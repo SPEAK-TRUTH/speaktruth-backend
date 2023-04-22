@@ -2,7 +2,9 @@ require('dotenv').config()
 require('express-async-errors')
 require('./utils/db')
 
-const reportRoute = require("./routes/reportRoutes");
+const reportRoutes = require("./routes/reportRoutes");
+const authRoutes = require("./routes/index.js");
+const chatRoutes = require("./routes/chat");
 
 const express = require('express')
 const app = express()
@@ -25,7 +27,10 @@ app.use(cors({
 app.use(express.json())
 app.use("/files", express.static(path.join(__dirname, "/files")));
 
-app.use("/api/reports", reportRoute);
+app.use("/api", authRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/report/chat", chatRoutes);
+
 
 // socket初期化
 initializeSocket(server);
