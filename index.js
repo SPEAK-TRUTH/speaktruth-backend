@@ -2,7 +2,8 @@ require('dotenv').config()
 require('express-async-errors')
 require('./utils/db')
 
-const reportRoute = require("./routes/reportRoutes");
+const reportRoute = require("./routes/reportRoutes.js");
+const authRoutes = require('./routes/index.js');
 
 const express = require('express')
 const app = express()
@@ -14,13 +15,16 @@ const cors = require('cors');
 app.use(cors());
 
 app.use(cors({
-  origin: 'http://127.0.0.1:5173',
+  // add any adddress based on your local
+  origin: 'http://127.0.0.1:5173'
 }));
 
 app.use(express.json())
 app.use("/files", express.static(path.join(__dirname, "/files")));
 
+app.use('/api', authRoutes);
 app.use("/api/reports", reportRoute);
+
 
 
 // Configure multer for file uploads
