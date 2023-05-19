@@ -3,7 +3,9 @@ require('express-async-errors')
 require('./utils/db')
 
 const reportRoute = require("./routes/reportRoutes.js");
-const authRoutes = require('./routes/index.js');
+const authRoute = require('./routes/index.js');
+const userRoute = require('./routes/userRoutes.js');
+const chatRoute = require('./routes/chatRoutes.js');
 
 const express = require('express')
 const app = express()
@@ -11,19 +13,39 @@ const port = process.env.PORT
 const path = require("path");
 const multer = require("multer"); 
 const cors = require('cors');
-// Enable CORS for all routes
-app.use(cors());
+
+// Import Socket.IO and create server
+const http = require('http');
+const { Server } = require("socket.io");
+const url = require('url');
 
 app.use(cors({
-  // add any adddress based on your local
-  origin: 'http://127.0.0.1:5173'
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://127.0.0.1:5173',
+      // Add more allowed base origins here
+    ];
+
+    const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
+
+    if (isAllowedOrigin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
 app.use(express.json())
 app.use("/files", express.static(path.join(__dirname, "/files")));
 
-app.use('/api', authRoutes);
+app.use('/api', authRoute);
 app.use("/api/reports", reportRoute);
+app.use("/api/users", userRoute);
+app.use("/api/chat", chatRoute);
+
 
 
 
@@ -87,6 +109,49 @@ const storage = multer.diskStorage({
     }
     next(err);
   });
+
+  // Replace the app.listen line with the following code
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://127.0.0.1:5173',
+        
+        // Add more allowed base origins here
+      ];
+
+      const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
+
+      if (isAllowedOrigin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
+
+
+
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("join", (reportKey) => {
+    socket.join(reportKey);
+    console.log(`User ${socket.id} joined room ${reportKey}`);
+  });
+
+  socket.on("newMessage", (reportKey, message) => {
+    io.in(reportKey).emit("newMessage", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
   
 
 
@@ -104,4 +169,4 @@ app.use((error, req,res,next) => {
     res.status(error.status || 500).json({ error: error.message })
 })
 
-app.listen(port, () => console.log(`Server is running on Port ${port}`))
+server.listen(port, () => console.log(`Server is running on Port ${port}`));
