@@ -19,6 +19,7 @@ const chatRoute = require('./routes/chatRoutes.js');
 
 // Allowed origins for CORS
 const allowedOrigins = [
+  process.env.FRONT_END_URL,
   'http://127.0.0.1:5173',
   // Add more allowed base origins here
 ];
@@ -115,13 +116,14 @@ const io = new Server(server, {
 
 // Socket.IO events
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  // console.log("User connected:", socket.id);
   socket.on("join", (reportKey) => {
     socket.join(reportKey);
-    console.log(`User ${socket.id} joined room ${reportKey}`);
+    // console.log(`User ${socket.id} joined room ${reportKey}`);
   });
   socket.on("newMessage", (reportKey, message) => io.in(reportKey).emit("newMessage", message));
-  socket.on("disconnect", () => console.log("User disconnected:", socket.id));
+  socket.on("disconnect");
+  // socket.on("disconnect", () => console.log("User disconnected:", socket.id));
 });
 
 // Error handlers
@@ -137,63 +139,3 @@ app.use((error, req, res, next) => res.status(error.status || 500).json({ error:
 // Server startup
 server.listen(port, () => console.log(`Server is running on Port ${port}`));
 
-
-// // Module imports
-// require('dotenv').config();
-// require('express-async-errors');
-// require('./config/db');
-// const express = require('express');
-// const app = express();
-// const port = process.env.PORT;
-// const path = require("path");
-// const http = require('http');
-// const { Server } = require("socket.io");
-
-// // Importing configurations
-// const corsConfig = require('./config/corsConfig');
-// const multerConfig = require('./config/multerConfig');
-// const errorHandler = require('./config/errorHandler');
-
-// const socketSetup = require('./config/socketSetup');
-
-// // Route imports
-// const reportRoute = require("./routes/reportRoutes.js");
-// const authRoute = require('./routes/index.js');
-// const userRoute = require('./routes/userRoutes.js');
-// const chatRoute = require('./routes/chatRoutes.js');
-
-// console.log("corsConfig:" + corsConfig);
-// console.log("authRoute:" + authRoute);
-// console.log("reportRoute:" + reportRoute);
-// console.log("userRoute:" + userRoute);
-// console.log("chatRoute:" + chatRoute);
-// console.log("multerConfig:" + multerConfig);
-// console.log("errorHandler" + errorHandler);
-
-
-// // App configurations
-// app.use(corsConfig);
-// app.use(express.json());
-// app.use("/files", express.static(path.join(__dirname, "/files")));
-
-// // Routes
-// app.use('/api', authRoute);
-// app.use("/api/reports", reportRoute);
-// app.use("/api/users", userRoute);
-// app.use("/api/chat", chatRoute);
-
-// // Multer configuration
-// app.use(multerConfig);
-
-// // Error handlers
-// app.use(errorHandler);
-
-
-
-// // Socket.IO setup
-// const server = http.createServer(app);
-// const io = new Server(server);
-// socketSetup(io);
-
-// // Server startup
-// server.listen(port, () => console.log(`Server is running on Port ${port}`));
