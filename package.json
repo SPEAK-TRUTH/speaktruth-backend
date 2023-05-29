@@ -7,7 +7,9 @@
     "start": "nodemon index.js",
     "dev": "nodemon src/index"
   },
-  "keywords": [],
+  "keywords": [
+    "heroku"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
