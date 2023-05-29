@@ -25,12 +25,16 @@ const allowedOrigins = [
 
 // CORS configuration
 app.use(cors({
-  origin: (origin, callback) => {
-    const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
-    isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin: (origin, callback) => {
+      if (!origin) {  // if origin is not defined
+        return callback(null, true); // allow requests with no origin 
+      }
+      // if origin is defined, proceed as normal
+      const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
+      isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
 // App configurations
@@ -87,15 +91,27 @@ app.use((err, req, res, next) => {
 // Socket.IO configurations
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: (origin, callback) => {
-      const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
-      isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
+    cors: {
+      origin: (origin, callback) => {
+        if (!origin) {  // if origin is not defined
+          return callback(null, true); // allow requests with no origin
+        }
+        // if origin is defined, proceed as normal
+        const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
+        isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
+      },
+      methods: ['GET', 'POST'],
+      credentials: true,
     },
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
 });
+
+  
+  
+  
+  
+  
+  
+  
 
 // Socket.IO events
 io.on("connection", (socket) => {
