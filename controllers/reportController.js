@@ -34,16 +34,6 @@ const createReport = async (req, res) => {
       throw new Error("Please enter all required fields");
     }
 
-    // let filesArray = [];
-    // if (req.files) {
-    //   console.log("Received files:", req.files);s
-    //   filesArray = req.files.map((file) => ({
-    //     filename: file.filename,
-    //     contentType: file.mimetype,
-    //     data: file.path,
-    //   }));
-    //   console.log("Processed files:", filesArray);
-    // }
     let filesArray = [];
     if (req.body.files) {
       console.log("Received files:", req.body.files);

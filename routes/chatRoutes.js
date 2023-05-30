@@ -11,7 +11,7 @@ router.post('/:reportKey/messages', authenticateUser, ChatController.postMessage
 router.post('/', async (req, res) => {
     console.log(req);
     const { reportKey } = req.body;
-    console.log(reportKey);
+    // console.log(reportKey);
     
     try {
       const newConversation = new ChatConversation({ reportKey });

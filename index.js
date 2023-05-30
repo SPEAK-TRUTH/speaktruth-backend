@@ -4,7 +4,7 @@ require('express-async-errors');
 require('./utils/db');
 const express = require('express');
 const app = express();
-const port = process.env.PORT;
+const port = 5002 || process.env.PORT;
 const path = require("path");
 const multer = require("multer");
 const cors = require('cors');
