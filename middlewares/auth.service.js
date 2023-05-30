@@ -6,7 +6,6 @@ const sendEmail = require("../utils/email/sendEmail")
 const User = require("../models/User")
 const Token = require("../models/Token")
 
-const {jwtSecret, salt, clientUrl} = require("../config")
 
 const signUp = async (data) => {
     try {
@@ -19,7 +18,7 @@ const signUp = async (data) => {
     user = new User(data)
 
     //generate a JWT token
-    const token = JWT.sign({ id: user._id }, jwtSecret)
+    const token = JWT.sign({ id: user._id }, process.env.JWT_SECRET)
     await user.save()
 
     return( data = {
@@ -45,7 +44,7 @@ const signIn = async (email, password) => {
 
     const isValid = await bcrypt.compare(password, user.password)
 
-    const token = JWT.sign({ id: user._id}, jwtSecret)
+    const token = JWT.sign({ id: user._id}, process.env.JWT_SECRET)
 
     if(isValid){
         return (data = {
@@ -67,7 +66,7 @@ const requestResetPassword = async (email) => {
     if(token) await token.deleteOne()
 
     const resetToken = crypto.randomBytes(32).toString("hex")
-    const hash = await bcrypt.hash(resetToken, salt)
+    const hash = await bcrypt.hash(resetToken, process.env.SALT)
 
     await new Token({
         userId: user._id,
@@ -75,7 +74,7 @@ const requestResetPassword = async (email) => {
         createdAt: Date.now()
     }).save()
 
-    const link = `${clientUrl}/api/auth/passwordReset?token=${resetToken}&id=${user._id}`
+    const link = `${process.env.CLIENT_URL}/api/auth/passwordReset?token=${resetToken}&id=${user._id}`
 
     //send an email
     sendEmail(
@@ -97,7 +96,7 @@ const resetPassword = async (userId, token, newPassword) => {
 
     if(!isValid) throw new Error("Invalid entry or the password reset has expired")
 
-    const hash = await bcrypt.hash(newPassword, salt)
+    const hash = await bcrypt.hash(newPassword, process.env.SALT)
 
     await User.updateOne({ _id: userId }, { $set: { password: hash }})
 
