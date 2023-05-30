@@ -19,7 +19,7 @@ const chatRoute = require('./routes/chatRoutes.js');
 // Allowed origins for CORS
 const allowedOrigins = [
   process.env.FRONT_END_URL,
-  'http://127.0.0.1:5173',
+  'http://localhost:5173',
   // Add more allowed base origins here
 ];
 
