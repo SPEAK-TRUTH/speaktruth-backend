@@ -1,11 +1,12 @@
 {
-  "name": "program-project-back-end",
+  "name": "speaktruth-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
-},
+    "start": "node index.js",
+    "heroku-postbuild": "yarn install && yarn run build"
+  },
   "keywords": [
     "heroku"
   ],
