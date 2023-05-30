@@ -4,7 +4,6 @@ require('express-async-errors');
 require('./utils/db');
 const express = require('express');
 const app = express();
-const port = 5002 || process.env.PORT;
 const path = require("path");
 const multer = require("multer");
 const cors = require('cors');
@@ -136,6 +135,7 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => res.status(error.status || 500).json({ error: error.message }));
 
-// Server startup
-server.listen(port, () => console.log(`Server is running on Port ${port}`));
-
+// Start the server on the specified port
+app.listen(5002 || process.env.PORT, () => {
+  console.log("Backend is running.");
+});
