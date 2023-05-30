@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
-    "dev": "nodemon src/index"
-  },
+    "start": "node index.js"
+},
   "keywords": [
     "heroku"
   ],
