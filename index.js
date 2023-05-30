@@ -136,6 +136,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => res.status(error.status || 500).json({ error: error.message }));
 
 // Start the server on the specified port
-app.listen(5002 || process.env.PORT, () => {
-  console.log("Backend is running.");
+var port = process.env.PORT || 5002;
+app.listen(port, function() {
+  console.log("App is running on port " + port);
 });
