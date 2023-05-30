@@ -66,7 +66,7 @@ const requestResetPassword = async (email) => {
     if(token) await token.deleteOne()
 
     const resetToken = crypto.randomBytes(32).toString("hex")
-    const hash = await bcrypt.hash(resetToken, process.env.SALT)
+    const hash = await bcrypt.hash(resetToken, parseInt(process.env.SALT))
 
     await new Token({
         userId: user._id,
@@ -96,7 +96,8 @@ const resetPassword = async (userId, token, newPassword) => {
 
     if(!isValid) throw new Error("Invalid entry or the password reset has expired")
 
-    const hash = await bcrypt.hash(newPassword, process.env.SALT)
+    
+    const hash = await bcrypt.hash(newPassword, parseInt(process.env.SALT))
 
     await User.updateOne({ _id: userId }, { $set: { password: hash }})
 

@@ -32,7 +32,7 @@ const UserSchema = new Schema(
 
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  const hash = await bcrypt.hash(this.password, process.env.SALT);
+  const hash = await bcrypt.hash(this.password, parseInt(process.env.SALT));
   this.password = hash;
   next();
 });
