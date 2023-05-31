@@ -32,7 +32,7 @@ app.use(cors({
       isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
 // App configurations
@@ -136,8 +136,5 @@ app.use((error, req, res, next) => res.status(error.status || 500).json({ error:
 // Start the server on the specified port
 app.listen(process.env.PORT || 5002, () => {
   console.log("Backend is running!");
-});
-app.get('/', (req, res) => {
-  console.log("Server is working!");
 });
 
