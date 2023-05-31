@@ -40,10 +40,6 @@ app.use(express.json());
 app.use("/files", express.static(path.join(__dirname, "/files")));
 
 // Routes
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
-
 app.use('/api', authRoute);
 app.use("/api/reports", reportRoute);
 app.use("/api/users", userRoute);
@@ -139,6 +135,9 @@ app.use((error, req, res, next) => res.status(error.status || 500).json({ error:
 
 // Start the server on the specified port
 app.listen(process.env.PORT || 5002, () => {
-  console.log("Backend is running.");
+  console.log("Backend is running!");
+});
+app.get('/', (req, res) => {
+  console.log("Server is working!");
 });
 
