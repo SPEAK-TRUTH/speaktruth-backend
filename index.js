@@ -40,6 +40,10 @@ app.use(express.json());
 app.use("/files", express.static(path.join(__dirname, "/files")));
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('Hello, world!');
+});
+
 app.use('/api', authRoute);
 app.use("/api/reports", reportRoute);
 app.use("/api/users", userRoute);
