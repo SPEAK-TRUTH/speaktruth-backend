@@ -18,7 +18,7 @@ const chatRoute = require('./routes/chatRoutes.js');
 
 // Allowed origins for CORS
 // const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
-const allowedOrigins = [process.env.FRONT_END_URL];
+const allowedOrigins = ['https://speaktruth.herokuapp.com'];
 
 
 // CORS configuration
