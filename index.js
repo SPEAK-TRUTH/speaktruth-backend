@@ -17,10 +17,9 @@ const userRoute = require('./routes/userRoutes.js');
 const chatRoute = require('./routes/chatRoutes.js');
 
 // Allowed origins for CORS
-const allowedOrigins = [
-  'http://localhost:5173',
-  process.env.FRONT_END_URL,
-];
+const allowedOrigins = {
+  orogin: [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL]
+};
 
 // CORS configuration
 app.use(cors({
