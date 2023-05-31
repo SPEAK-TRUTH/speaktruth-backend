@@ -136,7 +136,9 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => res.status(error.status || 500).json({ error: error.message }));
 
 // Start the server on the specified port
-var port = 5002 || process.env.PORT;
-app.listen(port, function() {
-  console.log("App is running on port " + port);
+const port = process.env.PORT || 5002; // Fallback to 5002 if process.env.PORT is not defined
+
+app.listen(port, () => {
+    console.log(`App is running on port ${port}`);
 });
+
