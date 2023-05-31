@@ -17,23 +17,23 @@ const userRoute = require('./routes/userRoutes.js');
 const chatRoute = require('./routes/chatRoutes.js');
 
 // Allowed origins for CORS
-// const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
-const allowedOrigins = ['https://speaktruth.herokuapp.com'];
+const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
+// const allowedOrigins = [process.env.FRONT_END_URL];
 
 
 // CORS configuration
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) {  // if origin is not defined
-      return callback(null, true); // allow requests with no origin 
-    }
-    // if origin is defined, proceed as normal
-    const isAllowedOrigin = allowedOrigins.includes(origin);
-    isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin: (origin, callback) => {
+      if (!origin) {  // if origin is not defined
+        return callback(null, true); // allow requests with no origin 
+      }
+      // if origin is defined, proceed as normal
+      const isAllowedOrigin = allowedOrigins.includes(origin);
+      isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
 // App configurations
