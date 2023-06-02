@@ -17,7 +17,7 @@ const userRoute = require('./routes/userRoutes.js');
 const chatRoute = require('./routes/chatRoutes.js');
 
 // Allowed origins for CORS
-// const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
+const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
 // const allowedOrigins = [process.env.FRONT_END_URL];
 
 
@@ -25,7 +25,9 @@ const chatRoute = require('./routes/chatRoutes.js');
 
 app.use(cors({
     origin: (origin, callback) => {
-      const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
+      if (!origin) {  // if origin is not defined
+        return callback(null, true); // allow requests with no origin 
+      }
       // if origin is defined, proceed as normal
       const isAllowedOrigin = allowedOrigins.includes(origin);
       isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
@@ -76,6 +78,7 @@ const upload = multer({ storage: storage, limits: uploadLimits, fileFilter: allo
 //     next(err);
 //   }
 // });
+
 app.post("/api/upload", upload.array("files", 5), (req, res, next) => {
   if (!req.files) {
     next(new Error("No files uploaded."));
@@ -85,6 +88,7 @@ app.post("/api/upload", upload.array("files", 5), (req, res, next) => {
     res.status(200).json({ fileNames: fileNames });
   }
 });
+
 
 
 // Error handling middleware for Multer
@@ -102,7 +106,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
       origin: (origin, callback) => {
-        const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
+        if (!origin) {  // if origin is not defined
+          return callback(null, true); // allow requests with no origin
+        }
         // if origin is defined, proceed as normal
         const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
         isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
