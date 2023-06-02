@@ -17,7 +17,7 @@ const userRoute = require('./routes/userRoutes.js');
 const chatRoute = require('./routes/chatRoutes.js');
 
 // Allowed origins for CORS
-const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
+// const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
 // const allowedOrigins = [process.env.FRONT_END_URL];
 
 
@@ -25,9 +25,7 @@ const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_U
 
 app.use(cors({
     origin: (origin, callback) => {
-      if (!origin) {  // if origin is not defined
-        return callback(null, true); // allow requests with no origin 
-      }
+      const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
       // if origin is defined, proceed as normal
       const isAllowedOrigin = allowedOrigins.includes(origin);
       isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
@@ -51,7 +49,9 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "files"),
   filename: (req, file, cb) => cb(null, file.originalname),
 });
+
 const uploadLimits = { fileSize: 25 * 1024 * 1024, files: 5 }; // 25 MB
+
 const allowedFileTypesFilter = (req, file, cb) => {
   const filetypes = /jpeg|jpg|png|pdf|doc|docx|xlsx|xls/;
   const mimetype = filetypes.test(file.mimetype);
@@ -61,21 +61,31 @@ const allowedFileTypesFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, limits: uploadLimits, fileFilter: allowedFileTypesFilter });
 
 // File upload route
-app.post("/api/upload", async (req, res, next) => {
-  try {
-    await upload.array("files", 5)(req, res, (err) => {
-      if (err) {
-        next(err);
-      } else {
-        const fileNames = req.files.map((file) => file.filename);
-        console.log("Sending response with file names:", { fileNames: fileNames });
-        res.status(200).json({ fileNames: fileNames });
-      }
-    });
-  } catch (err) {
-    next(err);
+// app.post("/api/upload", async (req, res, next) => {
+//   try {
+//     await upload.array("files", 5)(req, res, (err) => {
+//       if (err) {
+//         next(err);
+//       } else {
+//         const fileNames = req.files.map((file) => file.filename);
+//         console.log("Sending response with file names:", { fileNames: fileNames });
+//         res.status(200).json({ fileNames: fileNames });
+//       }
+//     });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+app.post("/api/upload", upload.array("files", 5), (req, res, next) => {
+  if (!req.files) {
+    next(new Error("No files uploaded."));
+  } else {
+    const fileNames = req.files.map((file) => file.filename);
+    console.log("Sending response with file names:", { fileNames: fileNames });
+    res.status(200).json({ fileNames: fileNames });
   }
 });
+
 
 // Error handling middleware for Multer
 app.use((err, req, res, next) => {
@@ -92,9 +102,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin) {  // if origin is not defined
-          return callback(null, true); // allow requests with no origin
-        }
+        const allowedOrigins = [process.env.FRONT_END_URL, process.env.FRONT_END_LOCAL_URL];
         // if origin is defined, proceed as normal
         const isAllowedOrigin = allowedOrigins.some(baseOrigin => origin.startsWith(baseOrigin));
         isAllowedOrigin ? callback(null, true) : callback(new Error('Not allowed by CORS'));
@@ -103,14 +111,6 @@ const io = new Server(server, {
       credentials: true,
     },
 });
-
-  
-  
-  
-  
-  
-  
-  
 
 // Socket.IO events
 io.on("connection", (socket) => {
@@ -132,6 +132,6 @@ app.use((error, req, res, next) => {
 
 
 // Start the server on the specified port
-app.listen(process.env.PORT || 5002, () => {
+server.listen(process.env.PORT || 5002, () => {
   console.log("Backend is running!");
 });
