@@ -81,7 +81,8 @@ const upload = multer({ storage: storage, limits: uploadLimits, fileFilter: allo
 
 app.post("/api/upload", upload.array("files", 5), (req, res, next) => {
   if (!req.files) {
-    next(new Error("No files uploaded."));
+    res.status(400).send({ error: 'No files uploaded.' });
+    return;
   } else {
     const fileNames = req.files.map((file) => file.filename);
     console.log("Sending response with file names:", { fileNames: fileNames });
