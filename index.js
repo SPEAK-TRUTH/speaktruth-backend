@@ -125,17 +125,13 @@ io.on("connection", (socket) => {
 });
 
 // Error handlers
-app.use((req, res, next) => {
-  const err = new Error("Route not found");
-  err.status = 404;
-  next(err);
-  console.log(err);
+app.use((error, req, res, next) => {
+  console.log(error); // log the error
+  res.status(error.status || 500).json({ error: error.message });
 });
 
-app.use((error, req, res, next) => res.status(error.status || 500).json({ error: error.message }));
 
 // Start the server on the specified port
 app.listen(process.env.PORT || 5002, () => {
   console.log("Backend is running!");
 });
-
